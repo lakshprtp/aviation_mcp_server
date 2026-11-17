@@ -1,6 +1,16 @@
 """Entry point to run the Aviationstack MCP server over HTTP/SSE on cloud platforms."""
 
+# pylint: disable=wrong-import-position,invalid-name
+
 import os
+import sys
+from pathlib import Path
+
+# Add src/ to sys.path so aviationstack_mcp is found regardless of installation mode
+SRC_PATH = str(Path(__file__).parent / "src")
+if SRC_PATH not in sys.path:
+    sys.path.insert(0, SRC_PATH)
+
 import uvicorn
 from starlette.responses import JSONResponse
 from starlette.routing import Route
@@ -23,4 +33,3 @@ app.routes.append(
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", "8000"))
     uvicorn.run(app, host="0.0.0.0", port=port)
-
