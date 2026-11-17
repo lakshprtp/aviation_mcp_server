@@ -1,4 +1,4 @@
-"""Entry point to run the Aviationstack MCP server over HTTP/SSE on cloud platforms."""
+"""Entry point to run the Aviationstack MCP server with HTTP Streaming on cloud platforms."""
 
 # pylint: disable=wrong-import-position,invalid-name
 
@@ -19,8 +19,13 @@ from aviationstack_mcp.server import mcp
 # Disable DNS rebinding check so external host headers (e.g., *.onrender.com) are accepted
 mcp.settings.transport_security = None
 
-# Build the Starlette ASGI application using SSE transport
-app = mcp.sse_app()
+# Build the Starlette ASGI application using Streamable HTTP (HTTP Streaming)
+app = mcp.streamable_http_app()
+
+# Mount SSE endpoints for backwards compatibility with legacy SSE clients
+sse_app = mcp.sse_app()
+for route in sse_app.routes:
+    app.routes.append(route)
 
 # Add root and health endpoints for platform health checks
 app.routes.append(
